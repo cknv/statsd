@@ -12,7 +12,7 @@ class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
     """Mixin for handling connections asynchronsly."""
 
 
-class Collector(socketserver.BaseRequestHandler):
+class Listener(socketserver.BaseRequestHandler):
     """Simple UDP listener for testing."""
 
     received = []
@@ -37,13 +37,13 @@ class Collector(socketserver.BaseRequestHandler):
 def listener():
     """Setup the listener for tests."""
     server_address = ('localhost', 8125)
-    server = ThreadedUDPServer(server_address, Collector)
+    server = ThreadedUDPServer(server_address, Listener)
     # ip, port = server.server_address
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
 
-    yield Collector
+    yield Listener
 
     server.shutdown()
     server.server_close()
