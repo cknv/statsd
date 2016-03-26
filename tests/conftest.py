@@ -30,9 +30,10 @@ class Collector(socketserver.BaseRequestHandler):
         """
         time.sleep(wait)
         yield from cls.received
+        cls.received.clear()
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.yield_fixture(scope='session')
 def listener():
     """Setup the listener for tests."""
     server_address = ('localhost', 8125)
@@ -46,7 +47,6 @@ def listener():
 
     server.shutdown()
     server.server_close()
-    Collector.received = []
 
 
 @pytest.fixture(scope='function')
