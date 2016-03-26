@@ -69,7 +69,7 @@ class Timer:
         """Return a new counter."""
         self.client = client
         self.prefix = prefix
-        self._value = None
+        self._start = None
         self._intermediate = None
 
     def _send(self, key, value):
@@ -91,19 +91,19 @@ class Timer:
 
     def start(self):
         """Start the timer."""
-        self._value = time.time()
+        self._start = time.time()
         return self
 
     def intermediate(self, key=None):
         """Send an intermediate time."""
-        since = self._intermediate or self._value
+        since = self._intermediate or self._start
         self._send(key, time.time() - since)
         self._intermediate = time.time()
 
     def stop(self, key='total'):
         """Stop the timer."""
-        self._send(key, time.time() - self._value)
-        self._value = None
+        self._send(key, time.time() - self._start)
+        self._start = None
 
 
 class Counter:
