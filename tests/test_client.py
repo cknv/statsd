@@ -65,3 +65,18 @@ def test_gauge(client, listener):
         b'mystats.mygauge.value:5|g',
         b'mystats.mygauge.value:10|g',
     ]
+
+
+def test_set(client, listener):
+    """Test a gauge."""
+    uniques = client.set('myset')
+
+    uniques.add('value', 5)
+    uniques.add('value', 5)
+    uniques.add('value', 10)
+
+    assert list(listener.load_received()) == [
+        b'mystats.myset.value:5|s',
+        b'mystats.myset.value:5|s',
+        b'mystats.myset.value:10|s',
+    ]

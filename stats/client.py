@@ -42,6 +42,7 @@ class StatsClient:
 
     def set(self, suffix):
         """Return a set."""
+        return Set(self, dot_join(self.prefix, suffix))
 
     def send(self, packet):
         """Send a packet."""
@@ -164,13 +165,17 @@ class Gauge:
         self.client.send(line)
 
 
-# class Set(StatsClient):
+class Set:
+    """Set class.
 
-#     """Set class
+    <key>:<value>|s
+    """
 
-#     <key>:<value>|s
-#     """
+    def __init__(self, client, prefix):
+        """Return a new counter."""
+        self.client = client
+        self.prefix = prefix
 
-#     def add(self, key, value):
-#         """Add a value to the set."""
-#         self._send(packets.set_packet(key, value))
+    def add(self, key, value):
+        """Add a value to the set."""
+        self.client.send(packets.set_packet(dot_join(self.prefix, key), value))
