@@ -155,7 +155,12 @@ class Gauge:
 
     def set(self, key, value):
         """Set the current value of the gauge."""
-        line = packets.gauge_packet(dot_join(self.prefix, key), value)
+        line = packets.gauge_set_packet(dot_join(self.prefix, key), value)
+        self.client.send(line)
+
+    def update(self, key, value):
+        """Update the current value with a relative change."""
+        line = packets.gauge_update_packet(dot_join(self.prefix, key), value)
         self.client.send(line)
 
 

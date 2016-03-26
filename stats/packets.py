@@ -15,8 +15,15 @@ def counter_packet(name, value):
     return packet(name, str(value), 'c')
 
 
-def gauge_packet(name, value):
+def gauge_set_packet(name, value):
     """Return a gauge formatted packet."""
+    return packet(name, str(value), 'g')
+
+
+def gauge_update_packet(name, value):
+    """Return a gauge formatted packet."""
+    if value >= 0:
+        value = '+{}'.format(value)
     return packet(name, str(value), 'g')
 
 
