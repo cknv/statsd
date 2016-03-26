@@ -21,6 +21,7 @@ def test_gauge_packet():
     """Assert gauge_packet works."""
     assert packets.gauge_packet('name', 15) == b'name:15|g'
 
+
 def test_set_packet():
     """Assert set_packet works."""
     assert packets.set_packet('name', 15) == b'name:15|s'

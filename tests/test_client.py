@@ -1,6 +1,7 @@
 """Full end to end tests using an actual UDP listener."""
 from freezegun import freeze_time
 
+
 def test_timer(client, listener):
     """Test a timer."""
     with freeze_time('2016-03-26 12:00:00') as frozen_datetime:
@@ -64,4 +65,3 @@ def test_gauge(client, listener):
         b'mystats.mygauge.value:5|g',
         b'mystats.mygauge.value:10|g',
     ]
-

@@ -1,10 +1,11 @@
 """Fixtures for testing."""
-import pytest
-import stats
-
-import time
-import threading
 import socketserver
+import threading
+import time
+
+import pytest
+
+import stats
 
 
 class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
@@ -12,16 +13,18 @@ class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
 
 
 class Collector(socketserver.BaseRequestHandler):
+    """Simple UDP listener for testing."""
 
     received = []
 
     def handle(self):
+        """Handle incoming UDP messages."""
         data = self.request[0].strip()
         self.received.extend(data.split(b'\n'))
 
     @classmethod
     def load_received(cls, wait=0.01):
-        """Yield from the received stats
+        """Yield from the received stats.
 
         But only after a slight delay, otherwise they might not all be there.
         """
@@ -31,6 +34,7 @@ class Collector(socketserver.BaseRequestHandler):
 
 @pytest.yield_fixture(scope='function')
 def listener():
+    """Setup the listener for tests."""
     server_address = ('localhost', 8125)
     server = ThreadedUDPServer(server_address, Collector)
     # ip, port = server.server_address
@@ -47,15 +51,5 @@ def listener():
 
 @pytest.fixture(scope='function')
 def client():
+    """Client for tests."""
     return stats.StatsClient('mystats')
-
-
-@pytest.fixture(scope='function')
-def mocked_client(mocker):
-    """Mock the client."""
-    client = stats.StatsClient('mystats')
-    client.send = mocker.MagicMock()
-    return client
-
-
-

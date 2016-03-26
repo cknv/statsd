@@ -1,5 +1,6 @@
 """Packet formatter functions."""
 
+
 def timer_packet(name, value):
     """Return a timer formatted packet."""
     return packet(

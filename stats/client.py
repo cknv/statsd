@@ -1,8 +1,10 @@
+"""The various clients that help you send stats."""
 import socket
 import time
 
 from . import packets
 from .helpers import dot_join
+
 
 class StatsClient:
     """Basic stats client.
@@ -41,7 +43,6 @@ class StatsClient:
     def set(self, suffix):
         """Return a set."""
 
-
     def send(self, packet):
         """Send a packet."""
         if self.disabled:
@@ -59,7 +60,7 @@ class StatsClient:
 
 
 class Timer:
-    """Timer class
+    """Timer class.
 
     <key>:<value>|ms
     """
@@ -106,10 +107,11 @@ class Timer:
 
 
 class Counter:
-    """Counter class
+    """Counter class.
 
     <key>:<value>|c
     """
+
     def __init__(self, client, prefix):
         """Return a new counter."""
         self.client = client
@@ -141,8 +143,7 @@ class Counter:
 
 
 class Gauge:
-
-    """Gauge class
+    """Gauge class.
 
     <key>:<value>|g
     """
