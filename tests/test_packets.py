@@ -1,4 +1,6 @@
 """Test that the packet formatting function works as intended."""
+import pytest
+
 from stats import packets
 
 
@@ -17,16 +19,23 @@ def test_counter_packet_negative():
     assert packets.counter_packet('name', -15) == b'name:-15|c'
 
 
-def test_gauge_set_packet():
+@pytest.mark.parametrize('case, expected', [
+    (15, b'name:15|g'),
+    (-15, b'name:0|g\nname:-15|g'),
+    (0, b'name:0|g'),
+])
+def test_gauge_set_packet(case, expected):
     """Assert gauge_set_packet works."""
-    assert packets.gauge_set_packet('name', 15) == b'name:15|g'
-    assert packets.gauge_set_packet('name', -15) == b'name:0|g\nname:-15|g'
+    assert packets.gauge_set_packet('name', case) == expected
 
 
-def test_gauge_update_packet():
+@pytest.mark.parametrize('case, expected', [
+    (15, b'name:+15|g'),
+    (-15, b'name:-15|g'),
+])
+def test_gauge_update_packet(case, expected):
     """Assert gauge_update_package works."""
-    assert packets.gauge_update_packet('name', 15) == b'name:+15|g'
-    assert packets.gauge_update_packet('name', -15) == b'name:-15|g'
+    assert packets.gauge_update_packet('name', case) == expected
 
 
 def test_set_packet():
