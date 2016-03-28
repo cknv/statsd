@@ -20,6 +20,7 @@ def test_counter_packet_negative():
 def test_gauge_set_packet():
     """Assert gauge_set_packet works."""
     assert packets.gauge_set_packet('name', 15) == b'name:15|g'
+    assert packets.gauge_set_packet('name', -15) == b'name:0|g\nname:-15|g'
 
 
 def test_gauge_update_packet():
