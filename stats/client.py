@@ -63,7 +63,7 @@ class StatsClient:
 class Timer:
     """Timer class.
 
-    <key>:<value>|ms
+    <name>:<value>|ms
     """
 
     def __init__(self, client, prefix):
@@ -73,11 +73,11 @@ class Timer:
         self._start = None
         self._intermediate = None
 
-    def _send(self, key, value):
+    def _send(self, name, value):
         """Send a timer off."""
         self.client.send(
             packets.timer_packet(
-                dot_join(self.prefix, key),
+                dot_join(self.prefix, name),
                 value,
             )
         )
@@ -87,22 +87,22 @@ class Timer:
         self._start = time.time()
         return self
 
-    def intermediate(self, key):
+    def intermediate(self, name):
         """Send an intermediate time."""
         since = self._intermediate or self._start
-        self._send(key, time.time() - since)
+        self._send(name, time.time() - since)
         self._intermediate = time.time()
 
-    def stop(self, key='total'):
+    def stop(self, name='total'):
         """Stop the timer."""
-        self._send(key, time.time() - self._start)
+        self._send(name, time.time() - self._start)
         self._start = None
 
 
 class Counter:
     """Counter class.
 
-    <key>:<value>|c
+    <name>:<value>|c
     """
 
     def __init__(self, client, prefix):
@@ -110,27 +110,27 @@ class Counter:
         self.client = client
         self.prefix = prefix
 
-    def increment(self, key, count):
+    def increment(self, name, count):
         """Increment the counter."""
         self.client.send(
             packets.counter_packet(
-                dot_join(self.prefix, key),
+                dot_join(self.prefix, name),
                 count,
             )
         )
 
-    def decrement(self, key, count):
+    def decrement(self, name, count):
         """Decrement the counter."""
-        self.increment(key, -count)
+        self.increment(name, -count)
 
     def from_mapping(self, mapping):
         """Send many values at once from a mapping."""
         parts = (
             packets.counter_packet(
-                dot_join(self.prefix, key),
+                dot_join(self.prefix, name),
                 count,
             )
-            for key, count in mapping.items()
+            for name, count in mapping.items()
         )
         self.client.send(b'\n'.join(parts))
 
@@ -138,7 +138,7 @@ class Counter:
 class Gauge:
     """Gauge class.
 
-    <key>:<value>|g
+    <name>:<value>|g
     """
 
     def __init__(self, client, prefix):
@@ -146,21 +146,21 @@ class Gauge:
         self.client = client
         self.prefix = prefix
 
-    def set(self, key, value):
+    def set(self, name, value):
         """Set the current value of the gauge."""
-        line = packets.gauge_set_packet(dot_join(self.prefix, key), value)
+        line = packets.gauge_set_packet(dot_join(self.prefix, name), value)
         self.client.send(line)
 
-    def update(self, key, value):
+    def update(self, name, value):
         """Update the current value with a relative change."""
-        line = packets.gauge_update_packet(dot_join(self.prefix, key), value)
+        line = packets.gauge_update_packet(dot_join(self.prefix, name), value)
         self.client.send(line)
 
 
 class Set:
     """Set class.
 
-    <key>:<value>|s
+    <name>:<value>|s
     """
 
     def __init__(self, client, prefix):
@@ -168,6 +168,6 @@ class Set:
         self.client = client
         self.prefix = prefix
 
-    def add(self, key, value):
+    def add(self, name, value):
         """Add a value to the set."""
-        self.client.send(packets.set_packet(dot_join(self.prefix, key), value))
+        self.client.send(packets.set_packet(dot_join(self.prefix, name), value))
