@@ -52,8 +52,8 @@ def test_counter_from_mapping(client, listener):
     }
 
 
-def test_gauge(client, listener):
-    """Test a gauge."""
+def test_gauge_set(client, listener):
+    """Test setting a gauge."""
     gauge = client.gauge('mygauge')
 
     gauge.set('value', 5)
@@ -67,8 +67,26 @@ def test_gauge(client, listener):
     ]
 
 
+def test_gauge_update(client, listener):
+    """Test updating a gauge."""
+    gauge = client.gauge('mygauge')
+
+    gauge.set('value', 10)
+    gauge.update('value', 5)
+    gauge.update('value', -5)
+    gauge.set('value', -10)
+
+    assert list(listener.load_received()) == [
+        b'mystats.mygauge.value:10|g',
+        b'mystats.mygauge.value:+5|g',
+        b'mystats.mygauge.value:-5|g',
+        b'mystats.mygauge.value:0|g',
+        b'mystats.mygauge.value:-10|g',
+    ]
+
+
 def test_set(client, listener):
-    """Test a gauge."""
+    """Test adding to a set."""
     uniques = client.set('myset')
 
     uniques.add('value', 5)
