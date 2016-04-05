@@ -3,6 +3,16 @@ Stats
 
 A simple library for sending `StatsD metrics <https://github.com/etsy/statsd/blob/master/docs/metric_types.md>`_ in python. It aims to provide a high level API for the user, however that also means that much of the lower level functionality found in most ofther StatsD clients are not exposed, frankly because I do not find that I need it. So no manually timing things and etc.
 
+Installing
+----------
+
+Currently ``stats`` is not distributed via pypi, so to get your hands on it, you will have to pip install via git.
+
+.. code-block:: shell
+
+    $ pip install git+git://github.com/cknv/statsd.git
+
+
 Use it like so:
 
 .. code-block:: python
