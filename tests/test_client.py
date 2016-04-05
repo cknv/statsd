@@ -19,6 +19,37 @@ def test_timer(client, listener):
     ]
 
 
+def test_timer_reuse(client, listener):
+    """Test that after stopping a timer it can be reused."""
+    with freeze_time('2016-03-26 12:00:00') as frozen_datetime:
+        timer = client.timer('mytimer').start()
+        frozen_datetime.tick()
+        timer.intermediate('halfway')
+        frozen_datetime.tick()
+        timer.intermediate('done')
+        timer.stop()
+
+    assert list(listener.load_received()) == [
+        b'mystats.mytimer.halfway:1000|ms',
+        b'mystats.mytimer.done:1000|ms',
+        b'mystats.mytimer.total:2000|ms',
+    ]
+
+    with freeze_time('2016-03-26 18:00:00') as frozen_datetime:
+        timer.start()
+        frozen_datetime.tick()
+        timer.intermediate('halfway')
+        frozen_datetime.tick()
+        timer.intermediate('done')
+        timer.stop()
+
+    assert list(listener.load_received()) == [
+        b'mystats.mytimer.halfway:1000|ms',
+        b'mystats.mytimer.done:1000|ms',
+        b'mystats.mytimer.total:2000|ms',
+    ]
+
+
 def test_counter(client, listener):
     """Test a counter."""
     counter = client.counter('mycounter')

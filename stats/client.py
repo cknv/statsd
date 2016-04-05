@@ -97,6 +97,7 @@ class Timer:
         """Stop the timer."""
         self._send(name, time.time() - self._start)
         self._start = None
+        self._intermediate = None
 
 
 class Counter:
