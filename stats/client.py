@@ -75,27 +75,19 @@ class Timer:
 
     def _send(self, key, value):
         """Send a timer off."""
-        if key is None:
-            self.client.send(
-                packets.timer_packet(
-                    self.prefix,
-                    value,
-                )
+        self.client.send(
+            packets.timer_packet(
+                dot_join(self.prefix, key),
+                value,
             )
-        else:
-            self.client.send(
-                packets.timer_packet(
-                    dot_join(self.prefix, key),
-                    value,
-                )
-            )
+        )
 
     def start(self):
         """Start the timer."""
         self._start = time.time()
         return self
 
-    def intermediate(self, key=None):
+    def intermediate(self, key):
         """Send an intermediate time."""
         since = self._intermediate or self._start
         self._send(key, time.time() - since)
