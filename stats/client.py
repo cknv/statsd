@@ -1,4 +1,5 @@
 """The various clients that help you send stats."""
+import itertools
 import socket
 import time
 
@@ -24,32 +25,31 @@ class StatsClient:
 
     def counter(self, suffix):
         """Return a counter."""
-        return Counter(
-            self,
-            dot_join(self.prefix, suffix),
-        )
+        return Counter(self, suffix)
 
     def timer(self, suffix):
         """Return a timer."""
-        return Timer(
-            self,
-            dot_join(self.prefix, suffix),
-        )
+        return Timer(self, suffix)
 
     def gauge(self, suffix):
         """Return a gauge."""
-        return Gauge(self, dot_join(self.prefix, suffix))
+        return Gauge(self, suffix)
 
     def set(self, suffix):
         """Return a set."""
-        return Set(self, dot_join(self.prefix, suffix))
+        return Set(self, suffix)
 
-    def send(self, packet):
+    def send(self, *partials):
         """Send a packet."""
         if self.disabled:
             return
 
-        self.socket.send(packet)
+        full_packages = (
+            dot_join(self.prefix, partial).encode()
+            for partial in partials
+        )
+
+        self.socket.send(b'\n'.join(full_packages))
 
     @staticmethod
     def connect(host, port):
@@ -66,18 +66,18 @@ class Timer:
     <name>:<value>|ms
     """
 
-    def __init__(self, client, prefix):
+    def __init__(self, client, suffix):
         """Return a new counter."""
         self.client = client
-        self.prefix = prefix
+        self.suffix = suffix
         self._start = None
         self._intermediate = None
 
     def _send(self, name, value):
         """Send a timer off."""
         self.client.send(
-            packets.timer_packet(
-                dot_join(self.prefix, name),
+            *packets.timer_packet(
+                dot_join(self.suffix, name),
                 value,
             )
         )
@@ -105,16 +105,16 @@ class Counter:
     <name>:<value>|c
     """
 
-    def __init__(self, client, prefix):
+    def __init__(self, client, suffix):
         """Return a new counter."""
         self.client = client
-        self.prefix = prefix
+        self.suffix = suffix
 
     def increment(self, name, count):
         """Increment the counter."""
         self.client.send(
-            packets.counter_packet(
-                dot_join(self.prefix, name),
+            *packets.counter_packet(
+                dot_join(self.suffix, name),
                 count,
             )
         )
@@ -126,13 +126,11 @@ class Counter:
     def from_mapping(self, mapping):
         """Send many values at once from a mapping."""
         parts = (
-            packets.counter_packet(
-                dot_join(self.prefix, name),
-                count,
-            )
+            packets.counter_packet(dot_join(self.suffix, name), count)
             for name, count in mapping.items()
         )
-        self.client.send(b'\n'.join(parts))
+
+        self.client.send(*itertools.chain.from_iterable(parts))
 
 
 class Gauge:
@@ -141,20 +139,20 @@ class Gauge:
     <name>:<value>|g
     """
 
-    def __init__(self, client, prefix):
+    def __init__(self, client, suffix):
         """Return a new counter."""
         self.client = client
-        self.prefix = prefix
+        self.suffix = suffix
 
     def set(self, name, value):
         """Set the current value of the gauge."""
-        line = packets.gauge_set_packet(dot_join(self.prefix, name), value)
-        self.client.send(line)
+        lines = packets.gauge_set_packet(dot_join(self.suffix, name), value)
+        self.client.send(*lines)
 
     def update(self, name, value):
         """Update the current value with a relative change."""
-        line = packets.gauge_update_packet(dot_join(self.prefix, name), value)
-        self.client.send(line)
+        lines = packets.gauge_update_packet(dot_join(self.suffix, name), value)
+        self.client.send(*lines)
 
 
 class Set:
@@ -163,11 +161,16 @@ class Set:
     <name>:<value>|s
     """
 
-    def __init__(self, client, prefix):
+    def __init__(self, client, suffix):
         """Return a new counter."""
         self.client = client
-        self.prefix = prefix
+        self.suffix = suffix
 
     def add(self, name, value):
         """Add a value to the set."""
-        self.client.send(packets.set_packet(dot_join(self.prefix, name), value))
+        self.client.send(
+            *packets.set_packet(
+                dot_join(self.suffix, name),
+                value,
+            )
+        )
