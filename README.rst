@@ -89,8 +89,21 @@ For counting unique events, such as unique users on a page.
 Custom
 ------
 
-In case the server you are using supports more metric types than this library, you can send raw metrics:
+In case the server you are using supports more metric types than this library, you can send custom metrics:
 
 .. code-block:: python
 
-    my_client.send('metric.name', value)
+    metric_to_send = 'metric.name:{value}|{type_suffix}'.format(
+        value=str(value),
+        type_suffix=type_suffix,
+    )
+
+    my_client.send(metric_to_send)
+
+The ``prefix`` given to the client when creating it, is then prepended to the metric name, encoded, and sent to the server.
+
+Currently it can even accept multiple metrics in one go:
+
+.. code-block:: python
+
+    my_client.send(metric_to_send, other_metric_to_send)
