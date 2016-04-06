@@ -1,7 +1,7 @@
 """Test that the packet formatting function works as intended."""
 import pytest
 
-from stats import packets
+from charcoal import packets
 
 
 def test_timer_packet():

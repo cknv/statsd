@@ -1,4 +1,4 @@
-Stats
+Charcoal
 =====
 
 A simple library for sending `StatsD metrics <https://github.com/etsy/statsd/blob/master/docs/metric_types.md>`_ in python. It aims to provide a high level API for the user, however that also means that much of the lower level functionality found in most ofther StatsD clients are not exposed, frankly because I do not find that I need it. So no manually timing things and etc.
@@ -6,26 +6,26 @@ A simple library for sending `StatsD metrics <https://github.com/etsy/statsd/blo
 Installing
 ----------
 
-Currently ``stats`` is not distributed via pypi, so to get your hands on it, you will have to pip install via git.
+Currently ``charcoal`` is not distributed via pypi, so to get your hands on it, you will have to pip install via git.
 
 .. code-block:: shell
 
-    $ pip install git+git://github.com/cknv/statsd.git
+    $ pip install charcoal
 
 
 Use it like so:
 
 .. code-block:: python
 
-    import stats
+    import charcoal
 
-    my_client = stats.StatsClient(prefix, host, port)
+    my_client = charcoal.StatsClient(prefix, host, port)
 
 For development, the client also provides a ``disabled`` kwarg, so you do not have change anything in the code when you want to not send stats:
 
 .. code-block:: python
 
-    my_client = stats.StatsClient(prefix, host, port, disabled=True)
+    my_client = charcoal.StatsClient(prefix, host, port, disabled=True)
 
 By itself, the client does not provide much use, but it does provide easy ways to get specific sub-clients, such as timers, counters, etc.
 

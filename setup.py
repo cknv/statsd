@@ -7,13 +7,13 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='stats',
+    name='charcoal',
     version='0.1.0',
 
     description='Opionionated high level StatsD client',
     long_description=long_description,
 
-    url='https://github.com/cknv/stats',
+    url='https://github.com/cknv/charcoal',
 
     author='Esben Sonne',
     author_email='esbensonne+code@gmail.com',
@@ -29,5 +29,5 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 
-    packages=['stats'],
+    packages=['charcoal'],
 )

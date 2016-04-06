@@ -5,7 +5,7 @@ import time
 
 import pytest
 
-import stats
+import charcoal
 
 
 class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
@@ -52,4 +52,4 @@ def listener():
 @pytest.fixture(scope='function')
 def client():
     """Client for tests."""
-    return stats.StatsClient('mystats')
+    return charcoal.StatsClient('mystats')
