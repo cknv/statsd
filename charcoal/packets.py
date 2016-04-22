@@ -1,9 +1,10 @@
 """Packet formatter functions."""
+from random import random
 
 
 def timer_packet(name, value):
     """Return a timer formatted packet."""
-    yield packet(
+    yield from packet(
         name,
         int(value * 1000),
         'ms',
@@ -12,27 +13,27 @@ def timer_packet(name, value):
 
 def counter_packet(name, value, sample=None):
     """Return a counter formatted packet."""
-    yield packet(name, str(value), 'c', sample)
+    yield from packet(name, str(value), 'c', sample)
 
 
 def gauge_set_packet(name, value):
     """Return a gauge formatted packet."""
     if value < 0:
-        yield packet(name, '0', 'g')
+        yield from packet(name, '0', 'g')
 
-    yield packet(name, str(value), 'g')
+    yield from packet(name, str(value), 'g')
 
 
 def gauge_update_packet(name, value):
     """Return a gauge formatted packet."""
     if value >= 0:
         value = '+{}'.format(value)
-    yield packet(name, str(value), 'g')
+    yield from packet(name, str(value), 'g')
 
 
 def set_packet(name, value):
     """Return a set formatted packet."""
-    yield packet(name, value, 's')
+    yield from packet(name, value, 's')
 
 
 def packet(name, value, suffix, sample=None):
@@ -41,15 +42,16 @@ def packet(name, value, suffix, sample=None):
     General utility function, to build other formatters on top of.
     """
     if sample is None:
-        return '{name}:{value}|{suffix}'.format(
+        yield '{name}:{value}|{suffix}'.format(
             name=name,
             value=str(value),
             suffix=suffix,
         )
     else:
-        return '{name}:{value}|{suffix}|@{sample}'.format(
-            name=name,
-            value=str(value),
-            suffix=suffix,
-            sample=sample
-        )
+        if sample >= random():
+            yield '{name}:{value}|{suffix}|@{sample}'.format(
+                name=name,
+                value=str(value),
+                suffix=suffix,
+                sample=sample
+            )

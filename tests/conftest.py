@@ -1,4 +1,5 @@
 """Fixtures for testing."""
+import random
 import socketserver
 import threading
 import time
@@ -53,3 +54,9 @@ def listener():
 def client():
     """Client for tests."""
     return charcoal.StatsClient('mystats')
+
+
+@pytest.fixture(scope='function', autouse=True)
+def fix_seed():
+    """Fix the random seed, so randomness in tests is predictable."""
+    random.seed('my fixed seed')

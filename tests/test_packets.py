@@ -21,7 +21,7 @@ def test_counter_packet_negative():
 
 def test_counter_with_sampling():
     """Assert that counter_packet can take an optional sample."""
-    assert list(packets.counter_packet('name', 15, sample=0.5)) == ['name:15|c|@0.5']
+    assert list(packets.counter_packet('name', 15, sample=1.0)) == ['name:15|c|@1.0']
 
 
 @pytest.mark.parametrize('case, expected', [

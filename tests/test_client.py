@@ -96,6 +96,23 @@ def test_counter_from_mapping(client, listener):
     }
 
 
+def test_counter_sampling(client, listener):
+    """Test counting, with sampling works as intended."""
+    counter = client.counter('mycounter')
+
+    for i in range(20):
+        counter.increment('a', i, sample=0.2)
+
+    assert set(listener.load_received()) == {
+        b'mystats.mycounter.a:8|c|@0.2',
+        b'mystats.mycounter.a:6|c|@0.2',
+        b'mystats.mycounter.a:2|c|@0.2',
+        b'mystats.mycounter.a:13|c|@0.2',
+        b'mystats.mycounter.a:4|c|@0.2',
+        b'mystats.mycounter.a:1|c|@0.2',
+    }
+
+
 def test_gauge_set(client, listener):
     """Test setting a gauge."""
     gauge = client.gauge('mygauge')
