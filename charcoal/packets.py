@@ -10,9 +10,9 @@ def timer_packet(name, value):
     )
 
 
-def counter_packet(name, value):
+def counter_packet(name, value, sample=None):
     """Return a counter formatted packet."""
-    yield packet(name, str(value), 'c')
+    yield packet(name, str(value), 'c', sample)
 
 
 def gauge_set_packet(name, value):
@@ -35,13 +35,21 @@ def set_packet(name, value):
     yield packet(name, value, 's')
 
 
-def packet(name, value, suffix):
+def packet(name, value, suffix, sample=None):
     """Return a formatted packet.
 
     General utility function, to build other formatters on top of.
     """
-    return '{name}:{value}|{suffix}'.format(
-        name=name,
-        value=str(value),
-        suffix=suffix,
-    )
+    if sample is None:
+        return '{name}:{value}|{suffix}'.format(
+            name=name,
+            value=str(value),
+            suffix=suffix,
+        )
+    else:
+        return '{name}:{value}|{suffix}|@{sample}'.format(
+            name=name,
+            value=str(value),
+            suffix=suffix,
+            sample=sample
+        )
