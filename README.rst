@@ -44,6 +44,13 @@ Timing
     timer.intermediate('second-pass')
     timer.stop()
 
+When you have end up with a measurement from somewhere else, perhaps from an external service, you can also send that, using the ``.send`` function on the timer class, in fact this is what the higler level functions above use, behind the scenes.
+
+.. code-block:: python
+
+    timer = my_client.timer('my-timer-name')
+    timer.send('db-call', 12.5)
+
 Counting
 --------
 
