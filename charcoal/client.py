@@ -99,6 +99,10 @@ class Timer:
         self._start = None
         self._intermediate = None
 
+    def raw(self, name, pre_measured_time):
+        """Send a pre-measured time."""
+        self._send(name, pre_measured_time)
+
 
 class Counter:
     """Counter class.
