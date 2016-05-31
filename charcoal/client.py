@@ -73,8 +73,8 @@ class Timer:
         self._start = None
         self._intermediate = None
 
-    def _send(self, name, value):
-        """Send a timer off."""
+    def send(self, name, value):
+        """Send a measured time off."""
         self.client.send(
             *packets.timer_packet(
                 dot_join(self.suffix, name),
@@ -90,12 +90,12 @@ class Timer:
     def intermediate(self, name):
         """Send an intermediate time."""
         since = self._intermediate or self._start
-        self._send(name, time.time() - since)
+        self.send(name, time.time() - since)
         self._intermediate = time.time()
 
     def stop(self, name='total'):
         """Stop the timer."""
-        self._send(name, time.time() - self._start)
+        self.send(name, time.time() - self._start)
         self._start = None
         self._intermediate = None
 

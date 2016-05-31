@@ -50,6 +50,19 @@ def test_timer_reuse(client, listener):
     ]
 
 
+def test_timer_manual_measurements(client, listener):
+    """Test that the timer supports premeasured times."""
+    timer = client.timer('mytimer')
+
+    timer.send('something', 10)
+    timer.send('something', 15)
+
+    assert list(listener.load_received()) == [
+        b'mystats.mytimer.something:10000|ms',
+        b'mystats.mytimer.something:15000|ms',
+    ]
+
+
 def test_counter(client, listener):
     """Test a counter."""
     counter = client.counter('mycounter')
