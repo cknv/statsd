@@ -2,18 +2,14 @@
 from random import random
 
 
-def timer_packet(name, value):
+def timer_packet(name, value, sample=None):
     """Return a timer formatted packet."""
-    yield from packet(
-        name,
-        int(value * 1000),
-        'ms',
-    )
+    yield from packet(name, int(value * 1000), 'ms', sample=sample)
 
 
 def counter_packet(name, value, sample=None):
     """Return a counter formatted packet."""
-    yield from packet(name, str(value), 'c', sample)
+    yield from packet(name, str(value), 'c', sample=sample)
 
 
 def gauge_set_packet(name, value):

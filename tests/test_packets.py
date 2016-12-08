@@ -9,6 +9,11 @@ def test_timer_packet():
     assert list(packets.timer_packet('name', 15)) == ['name:15000|ms']
 
 
+def test_timer_with_sampling():
+    """Assert timer_packets can have samples too."""
+    assert list(packets.timer_packet('name', 15, sample=1.0)) == ['name:15000|ms|@1.0']
+
+
 def test_counter_packet():
     """Assert counter_packet works."""
     assert list(packets.counter_packet('name', 15)) == ['name:15|c']
