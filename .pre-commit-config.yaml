@@ -1,5 +1,5 @@
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: 44e1753f98b0da305332abe26856c3e621c5c439
+    sha: 96fb7fa10f2f4c11ed33482a9ad7474251e5e97f
     hooks:
     -   id: flake8
         language_version: python3
@@ -13,7 +13,7 @@
     -   id: trailing-whitespace
         language_version: python3
 -   repo: git://github.com/pre-commit/mirrors-pylint
-    sha: 029186c31774c24af446c428eafc59ce8980dcb9
+    sha: 29c787c152552c93bdc59c45c23a155cb0570feb
     hooks:
     -   id: pylint
         language_version: python3
@@ -21,7 +21,7 @@
         - --rcfile=.pylintrc
         exclude: setup.py
 -   repo: git://github.com/asottile/reorder_python_imports
-    sha: 017e2f64306853ec7f000db52b8280da27eb3b96
+    sha: b022734351abe44d0b05a71a4fa1175287c59b49
     hooks:
     -   id: reorder-python-imports
         language_version: python3
