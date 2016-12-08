@@ -44,12 +44,13 @@ class StatsClient:
         if self.disabled:
             return
 
-        full_packages = (
+        full_packages = tuple(
             dot_join(self.prefix, partial).encode()
             for partial in partials
         )
 
-        self.socket.send(b'\n'.join(full_packages))
+        if full_packages:
+            self.socket.send(b'\n'.join(full_packages))
 
     @staticmethod
     def connect(host, port):
@@ -111,18 +112,19 @@ class Counter:
         self.client = client
         self.suffix = suffix
 
-    def increment(self, name, count):
+    def increment(self, name, count, sample=None):
         """Increment the counter."""
         self.client.send(
             *packets.counter_packet(
                 dot_join(self.suffix, name),
                 count,
+                sample=sample,
             )
         )
 
-    def decrement(self, name, count):
+    def decrement(self, name, count, sample=None):
         """Decrement the counter."""
-        self.increment(name, -count)
+        self.increment(name, -count, sample=sample)
 
     def from_mapping(self, mapping):
         """Send many values at once from a mapping."""

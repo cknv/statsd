@@ -63,6 +63,23 @@ def test_timer_manual_measurements(client, listener):
     ]
 
 
+def test_timer_sampling(client, listener):
+    """Test timers, with sampling works as intended."""
+    with freeze_time('2016-03-26 12:00:00') as frozen_datetime:
+        timer = client.timer('mytimer').start()
+        frozen_datetime.tick()
+        timer.intermediate('halfway')
+        frozen_datetime.tick()
+        timer.intermediate('done')
+        timer.stop()
+
+    assert list(listener.load_received()) == [
+        b'mystats.mytimer.halfway:1000|ms',
+        b'mystats.mytimer.done:1000|ms',
+        b'mystats.mytimer.total:2000|ms',
+    ]
+
+
 def test_counter(client, listener):
     """Test a counter."""
     counter = client.counter('mycounter')
@@ -93,6 +110,23 @@ def test_counter_from_mapping(client, listener):
         b'mystats.mycounter.a:5|c',
         b'mystats.mycounter.b:1|c',
         b'mystats.mycounter.c:15|c',
+    }
+
+
+def test_counter_sampling(client, listener):
+    """Test counting, with sampling works as intended."""
+    counter = client.counter('mycounter')
+
+    for i in range(20):
+        counter.increment('a', i, sample=0.2)
+
+    assert set(listener.load_received()) == {
+        b'mystats.mycounter.a:8|c|@0.2',
+        b'mystats.mycounter.a:6|c|@0.2',
+        b'mystats.mycounter.a:2|c|@0.2',
+        b'mystats.mycounter.a:13|c|@0.2',
+        b'mystats.mycounter.a:4|c|@0.2',
+        b'mystats.mycounter.a:1|c|@0.2',
     }
 
 
