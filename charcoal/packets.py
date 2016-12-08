@@ -43,11 +43,10 @@ def packet(name, value, suffix, sample=None):
             value=str(value),
             suffix=suffix,
         )
-    else:
-        if sample >= random():
-            yield '{name}:{value}|{suffix}|@{sample}'.format(
-                name=name,
-                value=str(value),
-                suffix=suffix,
-                sample=sample
-            )
+    elif sample >= random():
+        yield '{name}:{value}|{suffix}|@{sample}'.format(
+            name=name,
+            value=str(value),
+            suffix=suffix,
+            sample=sample
+        )
